@@ -2,6 +2,7 @@ import express from 'express';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import { executaChat } from './chat.js';
+import { iniciaChat } from './iniciaChat.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -13,13 +14,14 @@ app.use(express.json());
 app.use('/static', express.static(join(__dirname, 'static'), { extensions: ['css', 'svg', 'js'] }));
 
 app.get('/', (req, res) => {
+  iniciaChat()
   res.sendFile(join(__dirname, 'templates', 'chat.html'));
 });
 
 app.post('/chat', async (req, res) => {
   try {
     const mensagem = req.body?.mensagem;
-    console.log('Mensagem do usuário', mensagem)
+    // console.log('Mensagem do usuário', mensagem)
 
     if (!mensagem) {
       return res.status(400).json({ error: 'Erro no corpo da requisição. Uma mensagem deve ser enviada' });
