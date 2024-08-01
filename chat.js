@@ -1,23 +1,30 @@
-import { chat, functions, iniciaChat } from "./iniciaChat.js";
-import { incorporarDocumentos } from "./embedding.js";
+import { chat, functions } from "./iniciaChat.js";
+import { incorporarDocumentos, incorporarPergunta } from "./embedding.js";
 
 const documentos = await incorporarDocumentos([
   "A política de cancelamento é de 30 dias antes da viagem. Caso contrário, não faremos o reembolso",
-  "Viagem para Disney 6 dias é R$ 20.000,00 - Viagem para Disney em 10 dias é R$ 25.000,00",
+  "Viagem para Disney 6 dias é R$ 21.325,00 - Viagem para Disney em 10 dias é R$ 25.000,00",
 ]);
 
 console.log(documentos);
 
-const functionMap = { //Definingo palavras chaves e associando as funções
-  "identificaTaxa": ["juros", "taxa de juros", "dividir", "vezes"],
+const functionMap = {
+  //Definingo palavras chaves e associando as funções
+  identificaTaxa: ["juros", "taxa de juros", "dividir", "vezes"],
 };
 
 export async function executaChat(mensagemEnviada) {
-  const result = await chat.sendMessage(mensagemEnviada);
-  console.log("Tamanho do histórico: ", (await chat.getHistory()).length);
+  // console.log("Tamanho do histórico: ", (await chat.getHistory()).length);
+  let doc = await incorporarPergunta(mensagemEnviada, documentos);
+  let prompt = await
+    mensagemEnviada +
+    "talvez esse trecho te ajude a formular a resposta " +
+    doc.text;
 
+  const result = await chat.sendMessage(prompt);
   const response = result.response;
   console.log("Response", result.response);
+  console.log("RESPOSTA: ", response.text());
 
   let selectedFunction = null; //Verificando a existência de palavras chaves para escolher a função certa.
   for (const [functionName, keywords] of Object.entries(functionMap)) {
@@ -31,7 +38,9 @@ export async function executaChat(mensagemEnviada) {
   }
 
   if (result.response.functionCalls()) {
-    const call = result.response.functionCalls().find(fc => fc.name === selectedFunction); //REFATORAR, busca de funções dinâmicas
+    const call = result.response
+      .functionCalls()
+      .find((fc) => fc.name === selectedFunction); //REFATORAR, busca de funções dinâmicas
     if (call) {
       // Call the executable function named in the function call
       // with the arguments specified in the function call and
@@ -50,7 +59,7 @@ export async function executaChat(mensagemEnviada) {
       ]);
 
       // Log the text response.
-      console.log(result2.response.text());
+      console.log("RESPOSTA 2: ", result2.response.text());
       return result2.response.text();
     }
   } else {
