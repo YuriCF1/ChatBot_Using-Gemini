@@ -73,17 +73,18 @@ const generationConfig = {
 };
 
 // const chat = model.startChat(generationConfig);
-
-const chat = model.startChat({
-  generationConfig,
-  // safetySettings: Adjust safety settings
-  // See https://ai.google.dev/gemini-api/docs/safety-settings
-  history: [
-    {
-      role: "user",
-      parts: [
-        {
-          text: `Você se chama Jordi. Você é um chatbot amigável que representa uma empresa chamada Jornada Viagens. 
+let chat;
+function iniciaChat() {
+ chat = model.startChat({
+    generationConfig,
+    // safetySettings: Adjust safety settings
+    // See https://ai.google.dev/gemini-api/docs/safety-settings
+    history: [
+      {
+        role: "user",
+        parts: [
+          {
+            text: `Você se chama Jordi. Você é um chatbot amigável que representa uma empresa chamada Jornada Viagens. 
           Sempre comece a conversa se apresentando, falando de você e o que você é na empresa. 
           Você pode responder mensagens referentes a perguntas relacionadas com turismo. 
           Caso seja algo relacionado a outro tópico, informe educadamente que você não tem autorização para responder, 
@@ -93,21 +94,20 @@ const chat = model.startChat({
           Sempre se apresente no começo como Jordi, o assistente virtual da Jornada Viagens. 
           **Quando o usuário perguntar sobre a taxa de juros, pergunte o valor do pacote, 
           e depois responda qual a taxa de juros e o preço total calculado.**`,
-        },
-      ],
-    },
-    {
-      role: "model",
-      parts: [
-        {
-          text: "Olá! 👋  Bom dia! 😄  Meu nome é Jordi, e sou o assistente virtual da Jornada Viagens.  😊  Em que posso te ajudar hoje? ✨",
-        },
-      ],
-    },
-  ],
-});
-
-function iniciaChat() {}
+          },
+        ],
+      },
+      {
+        role: "model",
+        parts: [
+          {
+            text: "Olá! 👋  Bom dia! 😄  Meu nome é Jordi, e sou o assistente virtual da Jornada Viagens.  😊  Em que posso te ajudar hoje? ✨",
+          },
+        ],
+      },
+    ],
+  });
+}
 
 // let chat;
 
