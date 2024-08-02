@@ -1,12 +1,31 @@
+/*
+______________!!!!!!!!!!!_________________IMPORTANTE__________________!!!!!!!!!!!_____________
+Depois que eu conseguir converter os textos para vetores, 
+é bom salvar esses vetores em um BANCO DE DADOS VETORIAL 
+para que eu não tenha que recalcular a cada início de chat
+*/
+
 import { chat, functions } from "./iniciaChat.js";
-import { incorporarDocumentos, incorporarPergunta } from "./embedding.js";
+import {
+  incorporarDocumentos,
+  incorporarPergunta,
+  leArquivos,
+} from "./embedding.js";
 
-const documentos = await incorporarDocumentos([
-  "A política de cancelamento é de 30 dias antes da viagem. Caso contrário, não faremos o reembolso",
-  "Viagem para Disney 6 dias é R$ 21.325,00 - Viagem para Disney em 10 dias é R$ 25.000,00",
+const arquivos = await leArquivos([
+  "./Arquivos/Pacotes_Argentina.txt",
+  "./Arquivos/Pacotes_EUA.txt",
+  "./Arquivos/Politicas.txt",
 ]);
+const documentos = await incorporarDocumentos(
+  arquivos
+  //   [
+  //   "A política de cancelamento é de 30 dias antes da viagem. Caso contrário, não faremos o reembolso",
+  //   "Viagem para Disney 6 dias é R$ 21.325,00 - Viagem para Disney em 10 dias é R$ 25.000,00",
+  // ]
+);
 
-console.log(documentos);
+// console.log(documentos);
 
 const functionMap = {
   //Definingo palavras chaves e associando as funções
@@ -16,14 +35,15 @@ const functionMap = {
 export async function executaChat(mensagemEnviada) {
   // console.log("Tamanho do histórico: ", (await chat.getHistory()).length);
   let doc = await incorporarPergunta(mensagemEnviada, documentos);
-  let prompt = await
-    mensagemEnviada +
-    "talvez esse trecho te ajude a formular a resposta " +
-    doc.text;
+  let prompt =
+    (await mensagemEnviada) +
+    "talvez esse trecho te ajude a formular a resposta." +
+    doc.text +
+    "Lembre-se que quando a pergunta for referente a juros. Use a Function Callings, e faça o calculo de acordo com o valor do pacote que esteja sendo perguntado.";
 
   const result = await chat.sendMessage(prompt);
   const response = result.response;
-  console.log("Response", result.response);
+  // console.log("Response", result.response);
   console.log("RESPOSTA: ", response.text());
 
   let selectedFunction = null; //Verificando a existência de palavras chaves para escolher a função certa.
