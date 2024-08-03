@@ -75,7 +75,7 @@ const generationConfig = {
 // const chat = model.startChat(generationConfig);
 let chat;
 function iniciaChat() {
- chat = model.startChat({
+  chat = model.startChat({
     generationConfig,
     // safetySettings: Adjust safety settings
     // See https://ai.google.dev/gemini-api/docs/safety-settings
@@ -102,6 +102,22 @@ function iniciaChat() {
         parts: [
           {
             text: "Olá! 👋  Bom dia! 😄  Meu nome é Jordi, e sou o assistente virtual da Jornada Viagens.  😊  Em que posso te ajudar hoje? ✨",
+          },
+        ],
+      },
+      {
+        role: "user",
+        parts: [
+          {
+            text: `Olá, meu nome é Yuri. Quanto fica o pacote para ir a El calafate, já com a taxa de juros?`,
+          },
+        ],
+      },
+      {
+        role: "model",
+        parts: [
+          {
+            text: "Claro, Yuri! Para calcular a taxa de juros e o preço total do pacote para El Calafate, preciso saber em quantas vezes você deseja parcelar o pagamento. Você pode me informar, por favor?",
           },
         ],
       },
